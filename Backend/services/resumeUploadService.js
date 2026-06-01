@@ -37,8 +37,8 @@ const uploadResumeToCloudinary = (fileBuffer, originalName) => {
 
       try {
         fs.writeFileSync(filePath, fileBuffer);
-        const PORT = process.env.PORT || 5000;
-        const url = `http://localhost:${PORT}/uploads/${fileName}`;
+        const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5000}`;
+        const url = `${backendUrl}/uploads/${fileName}`;
         return resolve({
           secure_url: url,
           public_id: `mock_public_id_${uniqueSuffix}`,
