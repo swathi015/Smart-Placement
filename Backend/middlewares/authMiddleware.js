@@ -24,10 +24,7 @@ const protect = asyncHandler(async (req, res, next) => {
         return next(new Error('Not authorized, user not found'));
       }
 
-      if (!req.user.isApproved) {
-        res.status(403);
-        return next(new Error('User account is pending approval'));
-      }
+      // Admin approval is no longer required, so any authenticated token is valid
 
       next();
     } catch (error) {

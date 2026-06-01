@@ -17,13 +17,13 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('User already exists');
   }
 
-  // Create base user
+  // Create base user - all accounts are approved automatically
   const user = await User.create({
     name,
     email,
     password,
     role,
-    isApproved: role === 'student' ? true : false,
+    isApproved: true,
   });
 
   if (user) {
@@ -41,7 +41,7 @@ const registerUser = asyncHandler(async (req, res) => {
       });
     }
 
-    // If company, create Company profile document
+    // If company, create Company profile document - set status to approved automatically
     if (role === 'company') {
       const { companyName, industry, website, description, contactEmail, contactPhone } = profileDetails;
       await Company.create({
@@ -52,6 +52,7 @@ const registerUser = asyncHandler(async (req, res) => {
         description: description || '',
         contactEmail: contactEmail || email,
         contactPhone: contactPhone || '',
+        status: 'approved',
       });
     }
 
@@ -78,10 +79,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email }).select('+password');
 
   if (user && (await user.matchPassword(password))) {
-    if (!user.isApproved) {
-      res.status(403);
-      throw new Error('Your registration request is pending approval by admin');
-    }
+    // Admin approval check bypassed - all users can log in immediately
 
     res.json({
       _id: user._id,
