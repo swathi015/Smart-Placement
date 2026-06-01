@@ -1,0 +1,269 @@
+@baseUrl = http://localhost:5000/api
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMTUxZjQ4OWU1MzMzZDkwMzBmMDQxYyIsImlhdCI6MTc3OTc2OTE3MCwiZXhwIjoxNzgyMzYxMTcwfQ.90sl7nLIaNLcc_wa49dXS5ATa3UWBUKBi0DtdhIDCks
+
+### ==================== AUTH ROUTES ====================
+
+### 1. Register User (Do this first)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Jon Doe",
+  "email": "jon@example.com",
+  "password": "password123",
+  "role": "admin",
+  "mobileNumber": "9876543210"
+}
+
+### 2. Login User (Do this second - Copy the token from response and paste it in @token above)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "jon@example.com",
+  "password": "password123"
+}
+
+### Get User Profile
+GET {{baseUrl}}/auth/profile
+Authorization: Bearer {{token}}
+
+### Get Pending Users (Admin Only)
+GET {{baseUrl}}/auth/pending
+Authorization: Bearer {{token}}
+
+### Approve User (Admin Only)
+PUT {{baseUrl}}/auth/approve/userId123
+Authorization: Bearer {{token}}
+
+
+### ==================== STUDENT ROUTES ====================
+
+### Get Student Profile
+GET {{baseUrl}}/students/profile
+Authorization: Bearer {{token}}
+
+### Update Student Profile
+PUT {{baseUrl}}/students/profile
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "phone": "9876543210",
+  "cgpa": 8.5,
+  "branch": "Computer Science",
+  "backlogs": 0,
+  "skills": ["JavaScript", "React", "Node.js"]
+}
+
+### Get All Students (Admin, Coordinator, Company Only)
+GET {{baseUrl}}/students
+Authorization: Bearer {{token}}
+
+### Upload Resume
+POST {{baseUrl}}/students/resume
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="resume"; filename="resume.pdf"
+Content-Type: application/pdf
+
+<@resume.pdf
+------WebKitFormBoundary--
+
+### Get Eligible Jobs
+GET {{baseUrl}}/students/eligible-jobs
+Authorization: Bearer {{token}}
+
+
+### ==================== COMPANY ROUTES ====================
+
+### Get Company Profile
+GET {{baseUrl}}/companies/profile
+Authorization: Bearer {{token}}
+
+### Update Company Profile
+PUT {{baseUrl}}/companies/profile
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "companyName": "Tech Corp",
+  "location": "Bangalore",
+  "description": "Leading tech company",
+  "website": "https://techcorp.com"
+}
+
+### Get All Companies (Admin, Coordinator Only)
+GET {{baseUrl}}/companies
+Authorization: Bearer {{token}}
+
+### Post a Job
+POST {{baseUrl}}/companies/jobs
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "jobTitle": "Senior Developer",
+  "description": "We are looking for a senior developer",
+  "location": "Bangalore",
+  "salary": {
+    "min": 600000,
+    "max": 1000000
+  },
+  "requirements": {
+    "minCGPA": 7.0,
+    "backlogs": 0,
+    "skills": ["JavaScript", "React", "Node.js"]
+  },
+  "applyBy": "2026-06-30"
+}
+
+### Get Posted Jobs for Company
+GET {{baseUrl}}/companies/jobs
+Authorization: Bearer {{token}}
+
+### Update Job
+PUT {{baseUrl}}/companies/jobs/jobId123
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "jobTitle": "Senior Developer",
+  "description": "Updated job description",
+  "salary": {
+    "min": 700000,
+    "max": 1200000
+  }
+}
+
+
+### ==================== JOB ROUTES ====================
+
+### Get All Jobs
+GET {{baseUrl}}/jobs
+Authorization: Bearer {{token}}
+
+### Get Job by ID
+GET {{baseUrl}}/jobs/jobId123
+Authorization: Bearer {{token}}
+
+
+### ==================== APPLICATION ROUTES ====================
+
+### Apply to Job
+POST {{baseUrl}}/applications/apply/jobId123
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "coverLetter": "I am interested in this position"
+}
+
+### Get Applications for Job (Company, Coordinator, Admin Only)
+GET {{baseUrl}}/applications/job/jobId123
+Authorization: Bearer {{token}}
+
+### Get Student Applications
+GET {{baseUrl}}/applications/my-applications
+Authorization: Bearer {{token}}
+
+### Update Application Status (Company, Coordinator, Admin Only)
+PUT {{baseUrl}}/applications/applicationId123/status
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "selected"
+}
+
+
+### ==================== INTERVIEW ROUTES ====================
+
+### Schedule Interview (Company, Coordinator, Admin Only)
+POST {{baseUrl}}/interviews
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "applicationId": "appId123",
+  "scheduledDate": "2026-06-15",
+  "scheduledTime": "10:30",
+  "interviewType": "technical",
+  "round": 1
+}
+
+### Get Student Interviews
+GET {{baseUrl}}/interviews/my-interviews
+Authorization: Bearer {{token}}
+
+### Get Job Interviews (Company, Coordinator, Admin Only)
+GET {{baseUrl}}/interviews/job/jobId123
+Authorization: Bearer {{token}}
+
+### Update Interview (Company, Coordinator, Admin Only)
+PUT {{baseUrl}}/interviews/interviewId123
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "completed",
+  "result": "passed",
+  "feedback": "Candidate performed well"
+}
+
+
+### ==================== ANALYTICS ROUTES ====================
+
+### Get Admin Dashboard Stats
+GET {{baseUrl}}/analytics/dashboard
+Authorization: Bearer {{token}}
+
+### Get Company Dashboard Stats
+GET {{baseUrl}}/analytics/company
+Authorization: Bearer {{token}}
+
+
+### ==================== NOTIFICATION ROUTES ====================
+
+### Get My Notifications
+GET {{baseUrl}}/notifications
+Authorization: Bearer {{token}}
+
+### Mark Notification as Read
+PUT {{baseUrl}}/notifications/notificationId123/read
+Authorization: Bearer {{token}}
+
+### Mark All Notifications as Read
+PUT {{baseUrl}}/notifications/read-all
+Authorization: Bearer {{token}}
+
+
+### ==================== ATTENDANCE ROUTES ====================
+
+### Record Attendance (Admin, Coordinator Only)
+POST {{baseUrl}}/attendance
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "studentId": "studentId123",
+  "eventId": "eventId123",
+  "eventName": "Company Recruitment Drive",
+  "attended": true
+}
+
+### Get Attendance by Event (Admin, Coordinator, Company Only)
+GET {{baseUrl}}/attendance/event
+Authorization: Bearer {{token}}
+
+### Get Student Attendance
+GET {{baseUrl}}/attendance/student/studentId123
+Authorization: Bearer {{token}}
+
+
+### ==================== HEALTH CHECK ====================
+
+### Health Check
+GET http://localhost:5000
