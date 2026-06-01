@@ -17,6 +17,23 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('User already exists');
   }
 
+  // Pre-validate unique profile fields to prevent orphaned users on DB write failure
+  if (role === 'student' && profileDetails.rollNumber) {
+    const studentExists = await Student.findOne({ rollNumber: profileDetails.rollNumber });
+    if (studentExists) {
+      res.status(400);
+      throw new Error('Roll number is already registered');
+    }
+  }
+
+  if (role === 'company' && profileDetails.companyName) {
+    const companyExists = await Company.findOne({ companyName: profileDetails.companyName });
+    if (companyExists) {
+      res.status(400);
+      throw new Error('Company name is already registered');
+    }
+  }
+
   // Create base user - all accounts are approved automatically
   const user = await User.create({
     name,
